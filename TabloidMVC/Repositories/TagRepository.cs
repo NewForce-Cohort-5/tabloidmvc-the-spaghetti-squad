@@ -28,7 +28,7 @@ namespace TabloidMVC.Repositories
                             Name = reader.GetString(reader.GetOrdinal("name")),
                         });
                     }
-
+                   
                     reader.Close();
 
                     return Tags;
