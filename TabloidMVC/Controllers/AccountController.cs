@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -17,6 +19,34 @@ namespace TabloidMVC.Controllers
         {
             _userProfileRepository = userProfileRepository;
         }
+
+        [Authorize]
+        public ActionResult Index()
+        {
+            int userId = GetCurrentUserId();
+
+            UserProfile getUser = _userProfileRepository.GetUserById(userId);
+
+            List<UserProfile> users = _userProfileRepository.GetAllUsers();
+
+            //pass the current user into get Users by type
+           
+
+            if (getUser.UserType.Id == 1 && userId == getUser.Id)
+            {
+                return View(users);
+            }
+            else
+            {
+                return NotFound();
+
+            }
+        }
+
+        // GET: DogsController/Details/5
+       
+
+
 
         public IActionResult Login()
         {
@@ -54,6 +84,13 @@ namespace TabloidMVC.Controllers
         {
             await HttpContext.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        //get the current user & parse id
+        public int GetCurrentUserId()
+        {
+            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.Parse(id);
         }
     }
 }
