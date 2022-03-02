@@ -91,6 +91,7 @@ namespace TabloidMVC.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+<<<<<<< HEAD
         public ActionResult Create()
         {
             List<UserType> types = _userTypeRepository.GetAll();
@@ -131,6 +132,9 @@ namespace TabloidMVC.Controllers
 
 
 
+=======
+        // Logout will redirect to home page, where user will have option to log back in
+>>>>>>> main
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
