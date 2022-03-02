@@ -50,6 +50,7 @@ namespace TabloidMVC.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        // Logout will redirect to home page, where user will have option to log back in
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
