@@ -69,7 +69,7 @@ namespace TabloidMVC.Repositories
                               ut.[Name] AS UserTypeName
                          FROM UserProfile u
                               LEFT JOIN UserType ut ON u.UserTypeId = ut.id
-                               ORDER BY u.DisplayName DESC;";
+                               ORDER BY u.DisplayName ASC;";
 
                     var reader = cmd.ExecuteReader();
 
@@ -87,37 +87,6 @@ namespace TabloidMVC.Repositories
             }
         }
 
-        public List<UserProfile> GetUsersByUserType(int userTypeId)
-        {
-            using (SqlConnection conn = Connection)
-            {
-                conn.Open();
-
-                using (SqlCommand cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = @"
-                SELECT u.id, u.FirstName, u.LastName, u.DisplayName, u.Email,
-                              u.CreateDateTime, u.ImageLocation, u.UserTypeId,
-                              ut.[Name] AS UserTypeName
-                         FROM UserProfile u
-                              LEFT JOIN UserType ut ON u.UserTypeId = ut.id                
-                            WHERE UserTypeId = @userTypeId";
-
-                    cmd.Parameters.AddWithValue("@userTypeId", userTypeId);
-
-                    SqlDataReader reader = cmd.ExecuteReader();
-
-                    List<UserProfile> users = new List<UserProfile>();
-
-                    while (reader.Read())
-                    {
-                        users.Add(NewUserFromReader(reader));
-                    }
-                    reader.Close();
-                    return users;
-                }
-            }
-        }
 
         public UserProfile GetUserById(int id)
         {
@@ -151,6 +120,8 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
+
+        //Reusable SQLreader for UserProfile
         private UserProfile NewUserFromReader(SqlDataReader reader)
         {
             return new UserProfile()

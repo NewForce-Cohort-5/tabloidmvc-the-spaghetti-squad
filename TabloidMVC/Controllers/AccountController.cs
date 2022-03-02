@@ -23,15 +23,18 @@ namespace TabloidMVC.Controllers
         [Authorize]
         public ActionResult Index()
         {
+            //getting the current users ID
             int userId = GetCurrentUserId();
 
-            UserProfile getUser = _userProfileRepository.GetUserById(userId);
+            //passing the current user's Id to get a single user
 
+            UserProfile getUser = _userProfileRepository.GetUserById(userId);
+            //list to provide all users
             List<UserProfile> users = _userProfileRepository.GetAllUsers();
 
-            //pass the current user into get Users by type
+            
            
-
+            //admin conditional UserType 1 = Admin & current logged in users Id matches the user in the get single user method
             if (getUser.UserType.Id == 1 && userId == getUser.Id)
             {
                 return View(users);
@@ -43,7 +46,6 @@ namespace TabloidMVC.Controllers
             }
         }
 
-        // GET: DogsController/Details/5
        
 
 
