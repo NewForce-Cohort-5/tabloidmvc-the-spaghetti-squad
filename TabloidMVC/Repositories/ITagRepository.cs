@@ -6,6 +6,7 @@ namespace TabloidMVC.Repositories
     public interface ITagRepository
     {
         List<Tag> GetAllTags();
-      
+
+        public Tag GetTagById(int id);
     }
 }
