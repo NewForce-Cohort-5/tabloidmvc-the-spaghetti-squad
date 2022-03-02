@@ -1,14 +1,23 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TabloidMVC.Repositories;
 
 namespace TabloidMVC.Controllers
 {
     public class CategoryController : Controller
     {
+      
+        private readonly ICategoryRepository _categoryRepository;
+
+        public CategoryController(ICategoryRepository categoryRepository)
+        {
+            _categoryRepository = categoryRepository;
+        }
         // GET: CategoryController
         public ActionResult Index()
         {
-            return View();
+            var categories = _categoryRepository.GetAll();
+            return View(categories);
         }
 
         // GET: CategoryController/Details/5
