@@ -11,5 +11,7 @@ namespace TabloidMVC.Repositories
 
         UserProfile GetUserById(int id);
 
+        void Add(UserProfile user);
+
     }
 }

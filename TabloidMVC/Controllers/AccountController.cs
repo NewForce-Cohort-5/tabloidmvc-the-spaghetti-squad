@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using TabloidMVC.Models;
+using TabloidMVC.Models.ViewModels;
+
 using TabloidMVC.Repositories;
 
 namespace TabloidMVC.Controllers
@@ -14,10 +17,16 @@ namespace TabloidMVC.Controllers
     public class AccountController : Controller
     {
         private readonly IUserProfileRepository _userProfileRepository;
+        private readonly IUserTypesRepository _userTypeRepository;
 
-        public AccountController(IUserProfileRepository userProfileRepository)
+
+        public AccountController(
+            IUserProfileRepository userProfileRepository, 
+            IUserTypesRepository userTypesRepository)
         {
             _userProfileRepository = userProfileRepository;
+            _userTypeRepository = userTypesRepository;
+
         }
 
         [Authorize]
@@ -81,6 +90,46 @@ namespace TabloidMVC.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+        public ActionResult Create()
+        {
+            List<UserType> types = _userTypeRepository.GetAll();
+
+            UserRegisterFormViewModel vm = new UserRegisterFormViewModel()
+            {
+                UserProfile = new UserProfile(),
+                UserTypes = types
+            };
+
+            return View(vm);
+        }
+
+       
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(UserProfile userProfile)
+        {
+            try
+            {
+                _userProfileRepository.Add(userProfile);
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                List<UserType> types = _userTypeRepository.GetAll();
+
+                UserRegisterFormViewModel vm = new UserRegisterFormViewModel()
+                {
+                    UserProfile = new UserProfile(),
+                    UserTypes = types
+                };
+
+                return View(vm);
+            }
+        }
+
+
 
         public async Task<IActionResult> Logout()
         {
