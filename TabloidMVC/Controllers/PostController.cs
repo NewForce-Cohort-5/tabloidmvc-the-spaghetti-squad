@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualBasic;
+using System.Linq;
 using System.Security.Claims;
 using TabloidMVC.Models.ViewModels;
 using TabloidMVC.Repositories;
@@ -22,7 +23,7 @@ namespace TabloidMVC.Controllers
 
         public IActionResult Index()
         {
-            var posts = _postRepository.GetAllPublishedPosts();
+            var posts = _postRepository.GetAllPublishedPosts().OrderBy(e => e.PublishDateTime);
             return View(posts);
         }
 
