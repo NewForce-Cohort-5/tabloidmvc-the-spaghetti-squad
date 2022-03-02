@@ -23,7 +23,7 @@ namespace TabloidMVC.Controllers
 
         public IActionResult Index()
         {
-            var posts = _postRepository.GetAllPublishedPosts().OrderBy(e => e.PublishDateTime);
+            var posts = _postRepository.GetAllPublishedPosts().OrderByDescending(e => e.PublishDateTime).ToList();
             return View(posts);
         }
 
