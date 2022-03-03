@@ -21,43 +21,33 @@ namespace TabloidMVC.Controllers
 
 
         public AccountController(
-            IUserProfileRepository userProfileRepository)
+            IUserProfileRepository userProfileRepository,
+            IUserTypeRepository userTypeRepository)
         {
             _userProfileRepository = userProfileRepository;
+            _userTypeRepository = userTypeRepository;
+
 
         }
 
         [Authorize]
         public ActionResult Index()
         {
-            //getting the current users ID
-            int userId = GetCurrentUserId();
-
-            //passing the current user's Id to get a single user
-
-            UserProfile getUser = _userProfileRepository.GetUserById(userId);
-            //list to provide all users
+           
             List<UserProfile> users = _userProfileRepository.GetAllUsers();
 
             
            
-            //admin conditional UserType 1 = Admin & current logged in users Id matches the user in the get single user method
-            if (getUser.UserType.Id == 1 && userId == getUser.Id)
-            {
+         
                 return View(users);
-            }
-            else
-            {
-                return NotFound();
-
-            }
+          
         }
 
         public ActionResult Create()
         {
             List<UserType> types = _userTypeRepository.GetAll();
 
-            UserRegisterFormViewModel vm = new UserRegisterFormViewModel()
+            UserRegisterViewModel vm = new UserRegisterViewModel()
             {
                 UserProfile = new UserProfile(),
                 UserTypes = types
@@ -75,26 +65,22 @@ namespace TabloidMVC.Controllers
             {
                 _userProfileRepository.Add(userProfile);
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Home");
             }
             catch
             {
                 List<UserType> types = _userTypeRepository.GetAll();
 
-                UserRegisterFormViewModel vm = new UserRegisterFormViewModel()
+                UserRegisterViewModel vm = new UserRegisterViewModel()
                 {
                     UserProfile = new UserProfile(),
                     UserTypes = types
                 };
 
-                return View(vm);
+                return RedirectToAction("Login", "Account");
             }
         }
-           //list to provide all users
-             List<UserProfile> users = _userProfileRepository.GetAllUsers();
-            return View(users);
-                 
-        }
+         
 
       
 
