@@ -73,7 +73,7 @@ namespace TabloidMVC.Repositories
             }
         }
 
-        public void DeleteOwner(int ownerId)
+        public void DeleteTag(int TagId)
         {
             using (SqlConnection conn = Connection)
             {
@@ -82,11 +82,11 @@ namespace TabloidMVC.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                            DELETE FROM Owner
+                            DELETE FROM Tag
                             WHERE Id = @id
                         ";
 
-                    cmd.Parameters.AddWithValue("@id", ownerId);
+                    cmd.Parameters.AddWithValue("@id", TagId);
 
                     cmd.ExecuteNonQuery();
                 }
