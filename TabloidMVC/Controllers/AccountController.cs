@@ -52,12 +52,18 @@ namespace TabloidMVC.Controllers
         public async Task<ActionResult> Create(UserProfile userProfile)
         {
             try
-            {          
+            {
+                //adds new userProfile
+
+                _userProfileRepository.Add(userProfile);
+
+                userProfile = _userProfileRepository.GetByEmail(userProfile.Email);
 
                 var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, userProfile.Id.ToString()),
-                
+                new Claim(ClaimTypes.Email, userProfile.Email),
+                new Claim(ClaimTypes.Role, userProfile.UserType.Name)
             };
 
                 var claimsIdentity = new ClaimsIdentity(
@@ -69,15 +75,13 @@ namespace TabloidMVC.Controllers
                     CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(claimsIdentity));
 
-                //adds new userProfile
-
-                _userProfileRepository.Add(userProfile);
+              
 
                 return RedirectToAction("Index", "Home");
             }
             catch (Exception ex)
             {
-                return RedirectToAction("Index", "Home");
+                return View(userProfile);
             }
         }
 

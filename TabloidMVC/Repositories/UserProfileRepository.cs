@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using TabloidMVC.Models;
 using TabloidMVC.Utils;
@@ -95,19 +96,19 @@ namespace TabloidMVC.Repositories
                 {
                     cmd.CommandText = @"
                        insert into UserProfile  (DisplayName, FirstName, LastName, Email, CreateDateTime, ImageLocation, UserTypeId)
-                    
-                    VALUES (@DisplayName, @FirstName, @LastName, @Email, @CreateDateTime, @ImageLocation, @UserTypeId);
-";
+                              OUTPUT INSERTED.ID                   
+                    VALUES (@DisplayName, @FirstName, @LastName, @Email, @CreateDateTime, @ImageLocation, @UserTypeId)";
                     cmd.Parameters.AddWithValue("@DisplayName", user.DisplayName);
                     cmd.Parameters.AddWithValue("@FirstName", user.FirstName);
                     cmd.Parameters.AddWithValue("@LastName", (user.LastName));
                     cmd.Parameters.AddWithValue("@Email", user.Email);
-                    cmd.Parameters.AddWithValue("@CreateDateTime", DbUtils.ValueOrDBNull(System.DateTime.Now));
+                    cmd.Parameters.AddWithValue("@CreateDateTime", DateTime.Now);
                     cmd.Parameters.AddWithValue("@ImageLocation", DbUtils.ValueOrDBNull(user.ImageLocation));
                     cmd.Parameters.AddWithValue("@UserTypeId", 2);
 
                     user.Id = (int)cmd.ExecuteScalar();
                 }
+
             }
         }
 
