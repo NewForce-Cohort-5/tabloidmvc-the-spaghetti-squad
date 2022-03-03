@@ -2,12 +2,15 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualBasic;
+using System.Collections.Generic;
 using System.Security.Claims;
+using TabloidMVC.Models;
 using TabloidMVC.Models.ViewModels;
 using TabloidMVC.Repositories;
 
 namespace TabloidMVC.Controllers
 {
+    
     [Authorize]
     public class PostController : Controller
     {
@@ -25,6 +28,19 @@ namespace TabloidMVC.Controllers
             var posts = _postRepository.GetAllPublishedPosts();
             return View(posts);
         }
+
+        public IActionResult MyPostsIndex()
+        {
+            int userId = GetCurrentUserProfileId();
+
+            var postsByUser = _postRepository.GetUserPostById(userId);
+            if (postsByUser == null)
+            {
+                return NotFound();
+            }
+            return View(postsByUser);
+        }
+
 
         public IActionResult Details(int id)
         {
