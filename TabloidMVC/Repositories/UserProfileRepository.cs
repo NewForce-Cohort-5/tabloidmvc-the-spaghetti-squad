@@ -86,6 +86,38 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
+        public UserProfile GetUserById(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                SELECT u.id, u.FirstName, u.LastName, u.DisplayName, u.Email,
+                              u.CreateDateTime, u.ImageLocation, u.UserTypeId,
+                              ut.[Name] AS UserTypeName
+                         FROM UserProfile u
+                              LEFT JOIN UserType ut ON u.UserTypeId = ut.id                
+                            WHERE u.Id = @id";
+
+                    cmd.Parameters.AddWithValue("@id", id);
+                    var reader = cmd.ExecuteReader();
+
+                    UserProfile user = null;
+
+                    if (reader.Read())
+                    {
+                        user = NewUserFromReader(reader);
+                    }
+
+                    reader.Close();
+
+                    return user;
+                }
+            }
+        }
 
         //Reusable SQLreader for UserProfile
         private UserProfile NewUserFromReader(SqlDataReader reader)

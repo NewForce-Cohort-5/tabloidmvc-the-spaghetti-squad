@@ -35,7 +35,15 @@ namespace TabloidMVC.Controllers
                  
         }
 
-      
+        public IActionResult Details(int id)
+        {
+            var user = _userProfileRepository.GetUserById(id);
+            
+           
+            return View(user);
+        }
+
+
 
         public IActionResult Login()
         {
