@@ -17,15 +17,13 @@ namespace TabloidMVC.Controllers
     public class AccountController : Controller
     {
         private readonly IUserProfileRepository _userProfileRepository;
-        private readonly IUserTypeRepository _userTypeRepository;
 
 
         public AccountController(
-            IUserProfileRepository userProfileRepository,
-            IUserTypeRepository userTypeRepository)
+            IUserProfileRepository userProfileRepository
+            )
         {
             _userProfileRepository = userProfileRepository;
-            _userTypeRepository = userTypeRepository;
 
 
         }
@@ -45,44 +43,47 @@ namespace TabloidMVC.Controllers
 
         public ActionResult Create()
         {
-            List<UserType> types = _userTypeRepository.GetAll();
-
-            UserRegisterViewModel vm = new UserRegisterViewModel()
-            {
-                UserProfile = new UserProfile(),
-                UserTypes = types
-            };
-
-            return View(vm);
+            return View();
         }
 
-
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(UserProfile userProfile)
+        public async Task<ActionResult> Create(UserProfile userProfile)
         {
             try
+            {          
+
+                var claims = new List<Claim>
             {
+                new Claim(ClaimTypes.NameIdentifier, userProfile.Id.ToString()),
+                
+            };
+
+                var claimsIdentity = new ClaimsIdentity(
+                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                //I believe this signs checks and signs us in
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity));
+
+                //adds new userProfile
+
                 _userProfileRepository.Add(userProfile);
 
                 return RedirectToAction("Index", "Home");
             }
-            catch
+            catch (Exception ex)
             {
-                List<UserType> types = _userTypeRepository.GetAll();
-
-                UserRegisterViewModel vm = new UserRegisterViewModel()
-                {
-                    UserProfile = new UserProfile(),
-                    UserTypes = types
-                };
-
-                return RedirectToAction("Login", "Account");
+                return RedirectToAction("Index", "Home");
             }
         }
-         
 
-      
+
+
+
 
         public IActionResult Login()
         {

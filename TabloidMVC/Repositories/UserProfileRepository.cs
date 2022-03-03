@@ -104,7 +104,7 @@ namespace TabloidMVC.Repositories
                     cmd.Parameters.AddWithValue("@Email", user.Email);
                     cmd.Parameters.AddWithValue("@CreateDateTime", DbUtils.ValueOrDBNull(System.DateTime.Now));
                     cmd.Parameters.AddWithValue("@ImageLocation", DbUtils.ValueOrDBNull(user.ImageLocation));
-                    cmd.Parameters.AddWithValue("@UserTypeId", user.UserTypeId);
+                    cmd.Parameters.AddWithValue("@UserTypeId", 1);
 
                     user.Id = (int)cmd.ExecuteScalar();
                 }
