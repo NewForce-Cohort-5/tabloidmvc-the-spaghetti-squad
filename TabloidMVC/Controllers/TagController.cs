@@ -96,6 +96,7 @@ namespace TabloidMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, Tag tag)
         {
+            
             try
             {
                 _tagRepo.DeleteTag(id);
