@@ -13,9 +13,6 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th></th>
@@ -25,9 +22,7 @@
 @*Display list of categories in ascending order by name*@
 @foreach (var item in Model.OrderBy(item => item.Name)) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
+       
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
