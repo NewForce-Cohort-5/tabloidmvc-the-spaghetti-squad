@@ -14,6 +14,7 @@ namespace TabloidMVC.Controllers
     public class AccountController : Controller
     {
         private readonly IUserProfileRepository _userProfileRepository;
+        private readonly IUserTypeRepository _userTypeRepository;
 
         public AccountController(IUserProfileRepository userProfileRepository)
         {
@@ -46,7 +47,46 @@ namespace TabloidMVC.Controllers
             }
         }
 
-       
+        public ActionResult Create()
+        {
+            List<UserType> types = _userTypeRepository.GetAll();
+
+            UserRegisterFormViewModel vm = new UserRegisterFormViewModel()
+            {
+                UserProfile = new UserProfile(),
+                UserTypes = types
+            };
+
+            return View(vm);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(UserProfile userProfile)
+        {
+            try
+            {
+                _userProfileRepository.Add(userProfile);
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                List<UserType> types = _userTypeRepository.GetAll();
+
+                UserRegisterFormViewModel vm = new UserRegisterFormViewModel()
+                {
+                    UserProfile = new UserProfile(),
+                    UserTypes = types
+                };
+
+                return View(vm);
+            }
+        }
+
+
+
 
 
 
