@@ -20,22 +20,74 @@ namespace TabloidMVC.Controllers
 
 
         public AccountController(
-            IUserProfileRepository userProfileRepository)
+            IUserProfileRepository userProfileRepository
+            )
         {
             _userProfileRepository = userProfileRepository;
+
 
         }
 
         [Authorize]
         public ActionResult Index()
         {
-           //list to provide all users
-             List<UserProfile> users = _userProfileRepository.GetAllUsers();
-            return View(users);
-                 
+           
+            List<UserProfile> users = _userProfileRepository.GetAllUsers();
+
+            
+           
+         
+                return View(users);
+          
         }
 
-      
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+       
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Create(UserProfile userProfile)
+        {
+            try
+            {
+                //adds new userProfile
+
+                _userProfileRepository.Add(userProfile);
+
+                userProfile = _userProfileRepository.GetByEmail(userProfile.Email);
+
+                var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, userProfile.Id.ToString()),
+                new Claim(ClaimTypes.Email, userProfile.Email),
+                new Claim(ClaimTypes.Role, userProfile.UserType.Name)
+            };
+
+                var claimsIdentity = new ClaimsIdentity(
+                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                //I believe this signs checks and signs us in
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity));
+
+              
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                return View(userProfile);
+            }
+        }
+
+
+
+
 
         public IActionResult Login()
         {
