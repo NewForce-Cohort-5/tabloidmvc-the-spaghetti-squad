@@ -34,6 +34,8 @@ namespace TabloidMVC.Repositories
                               LEFT JOIN UserProfile u ON p.UserProfileId = u.id
                               LEFT JOIN UserType ut ON u.UserTypeId = ut.id
                         WHERE IsApproved = 1 AND PublishDateTime < SYSDATETIME()";
+                    //PublishDateTime < SYSDATETIME() is for getting post that has PublisDateTime in the past
+
                     var reader = cmd.ExecuteReader();
 
                     var posts = new List<Post>();

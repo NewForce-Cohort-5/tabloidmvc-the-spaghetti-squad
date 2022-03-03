@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualBasic;
+using System.Linq;
 using System.Collections.Generic;
 using System.Security.Claims;
 using TabloidMVC.Models;
@@ -25,7 +26,7 @@ namespace TabloidMVC.Controllers
 
         public IActionResult Index()
         {
-            var posts = _postRepository.GetAllPublishedPosts();
+            var posts = _postRepository.GetAllPublishedPosts().OrderByDescending(e => e.PublishDateTime).ToList();
             return View(posts);
         }
 
@@ -44,9 +45,12 @@ namespace TabloidMVC.Controllers
 
         public IActionResult Details(int id)
         {
+            //this is to check to see if there are posts that have been approved
             var post = _postRepository.GetPublishedPostById(id);
             if (post == null)
             {
+                //this is to check to see if there are posts that has not been approved
+
                 int userId = GetCurrentUserProfileId();
                 post = _postRepository.GetUserPostById(id, userId);
                 if (post == null)
