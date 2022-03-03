@@ -87,32 +87,39 @@ namespace TabloidMVC.Repositories
             }
         }
 
-        public void Add(UserProfile user)
+
+        public UserProfile GetUserById(int id)
         {
-            using (var conn = Connection)
+            using (SqlConnection conn = Connection)
             {
                 conn.Open();
-                using (var cmd = conn.CreateCommand())
+
+                using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                       insert into UserProfile  (DisplayName, FirstName, LastName, Email, CreateDateTime, ImageLocation, UserTypeId)
-                    
-                    VALUES (@DisplayName, @FirstName, @LastName, @Email, @CreateDateTime, @ImageLocation, @UserTypeId);
-";
-                    cmd.Parameters.AddWithValue("@DisplayName", user.DisplayName);
-                    cmd.Parameters.AddWithValue("@FirstName", user.FirstName);
-                    cmd.Parameters.AddWithValue("@LastName", (user.LastName));
-                    cmd.Parameters.AddWithValue("@Email", user.Email);
-                    cmd.Parameters.AddWithValue("@CreateDateTime", DbUtils.ValueOrDBNull(System.DateTime.Now));
-                    cmd.Parameters.AddWithValue("@ImageLocation", DbUtils.ValueOrDBNull(user.ImageLocation));
-                    cmd.Parameters.AddWithValue("@UserTypeId", user.UserTypeId);
+                SELECT u.id, u.FirstName, u.LastName, u.DisplayName, u.Email,
+                              u.CreateDateTime, u.ImageLocation, u.UserTypeId,
+                              ut.[Name] AS UserTypeName
+                         FROM UserProfile u
+                              LEFT JOIN UserType ut ON u.UserTypeId = ut.id                
+                            WHERE u.Id = @id";
 
-                    user.Id = (int)cmd.ExecuteScalar();
+                    cmd.Parameters.AddWithValue("@id", id);
+                    var reader = cmd.ExecuteReader();
+
+                    UserProfile user = null;
+
+                    if (reader.Read())
+                    {
+                        user = NewUserFromReader(reader);
+                    }
+
+                    reader.Close();
+
+                    return user;
                 }
             }
         }
-
-
 
         //Reusable SQLreader for UserProfile
         private UserProfile NewUserFromReader(SqlDataReader reader)

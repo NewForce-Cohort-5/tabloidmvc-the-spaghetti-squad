@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using TabloidMVC.Models;
+using TabloidMVC.Models.ViewModels;
+
 using TabloidMVC.Repositories;
 
 namespace TabloidMVC.Controllers
@@ -16,9 +19,12 @@ namespace TabloidMVC.Controllers
         private readonly IUserProfileRepository _userProfileRepository;
         private readonly IUserTypeRepository _userTypeRepository;
 
-        public AccountController(IUserProfileRepository userProfileRepository)
+
+        public AccountController(
+            IUserProfileRepository userProfileRepository)
         {
             _userProfileRepository = userProfileRepository;
+
         }
 
         [Authorize]
@@ -84,11 +90,13 @@ namespace TabloidMVC.Controllers
                 return View(vm);
             }
         }
+           //list to provide all users
+             List<UserProfile> users = _userProfileRepository.GetAllUsers();
+            return View(users);
+                 
+        }
 
-
-
-
-
+      
 
         public IActionResult Login()
         {
@@ -110,6 +118,7 @@ namespace TabloidMVC.Controllers
             {
                 new Claim(ClaimTypes.NameIdentifier, userProfile.Id.ToString()),
                 new Claim(ClaimTypes.Email, userProfile.Email),
+                new Claim(ClaimTypes.Role, userProfile.UserType.Name)
             };
 
             var claimsIdentity = new ClaimsIdentity(
@@ -121,6 +130,10 @@ namespace TabloidMVC.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+
+
+        // Logout will redirect to home page, where user will have option to log back in
 
         public async Task<IActionResult> Logout()
         {
