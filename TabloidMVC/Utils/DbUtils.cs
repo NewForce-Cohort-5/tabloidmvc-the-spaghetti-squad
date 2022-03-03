@@ -24,7 +24,7 @@ namespace TabloidMVC.Utils
             }
             return reader.GetDateTime(ordinal);
         }
-
+        //checking to see if nullable date is null or not
         public static object ValueOrDBNull(object value)
         {
             return value ?? DBNull.Value;
