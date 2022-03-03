@@ -161,16 +161,16 @@ ORDER By p.CreateDateTime Desc";
                                         cmd.Parameters.AddWithValue("@userProfileId", userProfileId);
                     var reader = cmd.ExecuteReader();
 
-                    Post post = null;
+                    var posts = new List<Post>();
 
-                    if (reader.Read())
+                    while (reader.Read())
                     {
-                        post = NewPostFromReader(reader);
+                        posts.Add(NewPostFromReader(reader));
                     }
 
                     reader.Close();
 
-                    return post;
+                    return posts;
                 }
             }
         }
