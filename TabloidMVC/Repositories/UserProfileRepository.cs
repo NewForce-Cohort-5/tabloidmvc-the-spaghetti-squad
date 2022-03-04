@@ -145,6 +145,27 @@ namespace TabloidMVC.Repositories
             }
         }
 
+        public void DeactivateUser(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                            UPDATE User Profile
+                            SET Deactivated = @deactivated                           
+                            WHERE id = @id";
+
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.Parameters.AddWithValue("@Deactivated", true);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
         //Reusable SQLreader for UserProfile
         private UserProfile NewUserFromReader(SqlDataReader reader)
         {

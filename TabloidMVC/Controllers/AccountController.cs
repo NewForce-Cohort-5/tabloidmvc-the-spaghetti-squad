@@ -93,6 +93,38 @@ namespace TabloidMVC.Controllers
             return View(user);
         }
 
+        [Authorize]
+        public ActionResult Edit(int id)
+        {
+            int currentUserId = GetCurrentUserId();
+
+            UserProfile userProfile = _userProfileRepository.GetUserById(id);
+
+            if (userProfile == null || userProfile.UserType.Name != "Admin" && currentUserId != userProfile.Id)
+            {
+                return NotFound();
+            }
+
+            return View(userProfile);
+        }
+
+      
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, UserProfile userProfile)
+        {
+            try
+            {
+                _userProfileRepository.DeactivateUser(id);
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                return View(userProfile);
+            }
+        }
+
 
 
 
