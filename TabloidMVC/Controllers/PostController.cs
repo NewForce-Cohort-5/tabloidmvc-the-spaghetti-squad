@@ -3,12 +3,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualBasic;
 using System.Linq;
+using System.Collections.Generic;
 using System.Security.Claims;
+using TabloidMVC.Models;
 using TabloidMVC.Models.ViewModels;
 using TabloidMVC.Repositories;
 
 namespace TabloidMVC.Controllers
 {
+    
     [Authorize]
     public class PostController : Controller
     {
@@ -26,6 +29,20 @@ namespace TabloidMVC.Controllers
             var posts = _postRepository.GetAllPublishedPosts().OrderByDescending(e => e.PublishDateTime).ToList();
             return View(posts);
         }
+       
+        //this is to see the list of posts by the logged in user after a user clicks My Posts in the menu
+        public IActionResult MyPostsIndex()
+        {
+            int userId = GetCurrentUserProfileId();
+
+            var postsByUser = _postRepository.GetUserPostById(userId);
+            if (postsByUser == null)
+            {
+                return NotFound();
+            }
+            return View(postsByUser);
+        }
+
 
         public IActionResult Details(int id)
         {
