@@ -1,4 +1,5 @@
-﻿@model IEnumerable<TabloidMVC.Models.Post>
+﻿@*This is to view MyPostIndex page*@
+@model IEnumerable<TabloidMVC.Models.Post>
 
 @{
     ViewData["Title"] = "MyPostsIndex";
@@ -12,18 +13,14 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
+            
             <th>
                 @Html.DisplayNameFor(model => model.Title)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Content)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ImageLocation)
-            </th>
+            
             <th>
                 @Html.DisplayNameFor(model => model.CreateDateTime)
             </th>
@@ -31,7 +28,7 @@
                 @Html.DisplayNameFor(model => model.PublishDateTime)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IsApproved)
+                Approval Status
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CategoryId)
@@ -45,32 +42,33 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
+            
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Content)
             </td>
+            
             <td>
-                @Html.DisplayFor(modelItem => item.ImageLocation)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreateDateTime)
+                @item.CreateDateTime.ToShortDateString()
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.PublishDateTime)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IsApproved)
+                    @if (item.IsApproved)
+                    {
+                        <p>Approved</p>
+                    }else{
+                            <p><b>Not</b> Approved</p>
+                        }
+             </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CategoryId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserProfileId)
+                @Html.DisplayFor(modelItem => item.UserProfile.DisplayName)
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |

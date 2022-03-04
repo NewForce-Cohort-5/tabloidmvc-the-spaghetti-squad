@@ -29,7 +29,8 @@ namespace TabloidMVC.Controllers
             var posts = _postRepository.GetAllPublishedPosts().OrderByDescending(e => e.PublishDateTime).ToList();
             return View(posts);
         }
-
+       
+        //this is to see the list of posts by the logged in user after a user clicks My Posts in the menu
         public IActionResult MyPostsIndex()
         {
             int userId = GetCurrentUserProfileId();

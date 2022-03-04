@@ -135,7 +135,7 @@ namespace TabloidMVC.Repositories
             }
         }
 
-        //this is for ALL posts of both published and unpublished by the userId
+        //this is for ALL posts of both published and unpublished by the userId and this is used for print a list after the user clicks my post in the menu
         public List<Post> GetUserPostById(int userProfileId)
         {
             using (var conn = Connection)
@@ -217,6 +217,7 @@ ORDER By p.CreateDateTime Desc";
                 ImageLocation = DbUtils.GetNullableString(reader, "HeaderImage"),
                 CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
                 PublishDateTime = DbUtils.GetNullableDateTime(reader, "PublishDateTime"),
+                IsApproved = reader.GetBoolean(reader.GetOrdinal("IsApproved")),
                 CategoryId = reader.GetInt32(reader.GetOrdinal("CategoryId")),
                 Category = new Category()
                 {
