@@ -21,7 +21,7 @@ namespace TabloidMVC.Repositories
                     cmd.CommandText = @"
                        SELECT u.id, u.FirstName, u.LastName, u.DisplayName, u.Email,
                               u.CreateDateTime, u.ImageLocation, u.UserTypeId,
-                              ut.[Name] AS UserTypeName
+                              ut.[Name] AS UserTypeName, u.Deactivated
                          FROM UserProfile u
                               LEFT JOIN UserType ut ON u.UserTypeId = ut.id
                         WHERE email = @email";
@@ -32,22 +32,7 @@ namespace TabloidMVC.Repositories
 
                     if (reader.Read())
                     {
-                        userProfile = new UserProfile()
-                        {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            Email = reader.GetString(reader.GetOrdinal("Email")),
-                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
-                            DisplayName = reader.GetString(reader.GetOrdinal("DisplayName")),
-                            CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
-                            ImageLocation = DbUtils.GetNullableString(reader, "ImageLocation"),
-                            UserTypeId = reader.GetInt32(reader.GetOrdinal("UserTypeId")),
-                            UserType = new UserType()
-                            {
-                                Id = reader.GetInt32(reader.GetOrdinal("UserTypeId")),
-                                Name = reader.GetString(reader.GetOrdinal("UserTypeName"))
-                            },
-                        };
+                        userProfile = NewUserFromReader(reader);
                     }
 
                     reader.Close();
@@ -67,9 +52,40 @@ namespace TabloidMVC.Repositories
                     cmd.CommandText = @"
                        SELECT u.id, u.FirstName, u.LastName, u.DisplayName, u.Email,
                               u.CreateDateTime, u.ImageLocation, u.UserTypeId,
-                              ut.[Name] AS UserTypeName
+                              ut.[Name] AS UserTypeName, u.Deactivated
                          FROM UserProfile u
                               LEFT JOIN UserType ut ON u.UserTypeId = ut.id
+                               ORDER BY u.DisplayName ASC;";
+
+                    var reader = cmd.ExecuteReader();
+
+                    var users = new List<UserProfile>();
+
+                    while (reader.Read())
+                    {
+                        users.Add(NewUserFromReader(reader));
+                    }
+
+                    reader.Close();
+
+                    return users;
+                }
+            }
+        }
+        public List<UserProfile> GetActiveUsers()
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                       SELECT u.id, u.FirstName, u.LastName, u.DisplayName, u.Email,
+                              u.CreateDateTime, u.ImageLocation, u.UserTypeId,
+                              ut.[Name] AS UserTypeName, u.Deactivated
+                         FROM UserProfile u
+                              LEFT JOIN UserType ut ON u.UserTypeId = ut.id
+                                WHERE u.Deactivated = 0
                                ORDER BY u.DisplayName ASC;";
 
                     var reader = cmd.ExecuteReader();
@@ -98,7 +114,7 @@ namespace TabloidMVC.Repositories
                     cmd.CommandText = @"
                 SELECT u.id, u.FirstName, u.LastName, u.DisplayName, u.Email,
                               u.CreateDateTime, u.ImageLocation, u.UserTypeId,
-                              ut.[Name] AS UserTypeName
+                              ut.[Name] AS UserTypeName, u.Deactivated
                          FROM UserProfile u
                               LEFT JOIN UserType ut ON u.UserTypeId = ut.id                
                             WHERE u.Id = @id";
@@ -128,9 +144,9 @@ namespace TabloidMVC.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                       insert into UserProfile  (DisplayName, FirstName, LastName, Email, CreateDateTime, ImageLocation, UserTypeId)
+                       insert into UserProfile  (DisplayName, FirstName, LastName, Email, CreateDateTime, ImageLocation, UserTypeId, Deactivated)
                               OUTPUT INSERTED.ID                   
-                    VALUES (@DisplayName, @FirstName, @LastName, @Email, @CreateDateTime, @ImageLocation, @UserTypeId)";
+                    VALUES (@DisplayName, @FirstName, @LastName, @Email, @CreateDateTime, @ImageLocation, @UserTypeId, @Deactivated)";
                     cmd.Parameters.AddWithValue("@DisplayName", user.DisplayName);
                     cmd.Parameters.AddWithValue("@FirstName", user.FirstName);
                     cmd.Parameters.AddWithValue("@LastName", (user.LastName));
@@ -138,10 +154,33 @@ namespace TabloidMVC.Repositories
                     cmd.Parameters.AddWithValue("@CreateDateTime", DateTime.Now);
                     cmd.Parameters.AddWithValue("@ImageLocation", DbUtils.ValueOrDBNull(user.ImageLocation));
                     cmd.Parameters.AddWithValue("@UserTypeId", 2);
+                    cmd.Parameters.AddWithValue("@Deactivated", false);
+
 
                     user.Id = (int)cmd.ExecuteScalar();
                 }
 
+            }
+        }
+
+        public void DeactivateUser(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                            UPDATE UserProfile
+                            SET Deactivated = @Deactivated                           
+                            WHERE id = @id";
+
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.Parameters.AddWithValue("@Deactivated", true);
+
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
 
@@ -157,6 +196,7 @@ namespace TabloidMVC.Repositories
                 Email = reader.GetString(reader.GetOrdinal("Email")),
                 CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
                 LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                Deactivated = reader.GetBoolean(reader.GetOrdinal("Deactivated")),
                 UserType = new UserType()
                 {
                     Id = reader.GetInt32(reader.GetOrdinal("UserTypeId")),
