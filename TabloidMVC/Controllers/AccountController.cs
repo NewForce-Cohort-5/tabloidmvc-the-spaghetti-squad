@@ -31,15 +31,12 @@ namespace TabloidMVC.Controllers
         [Authorize]
         public ActionResult Index()
         {
-           
-            List<UserProfile> users = _userProfileRepository.GetAllUsers();
-
-            
-           
-         
-                return View(users);
           
-        }
+                List<UserProfile> users = _userProfileRepository.GetActiveUsers();
+          
+                        return View(users);
+                
+}
 
         public ActionResult Create()
         {
@@ -94,30 +91,46 @@ namespace TabloidMVC.Controllers
         }
 
         [Authorize]
-        public ActionResult Edit(int id)
+
+        //soft delete or deactivate
+        public ActionResult Delete(int id)
         {
             int currentUserId = GetCurrentUserId();
 
             UserProfile userProfile = _userProfileRepository.GetUserById(id);
 
-            if (userProfile == null || userProfile.UserType.Name != "Admin" && currentUserId != userProfile.Id)
+            //prevent navigation to delete with param for null users and if current user isn't admin
+            if (userProfile != null || User.IsInRole("Admin"))
             {
-                return NotFound();
+                return View(userProfile);
+                
             }
 
-            return View(userProfile);
+            return NotFound();
         }
 
       
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, UserProfile userProfile)
+        public ActionResult Delete(int id, UserProfile userProfile)
         {
+            //goes back and gets all the user information so I can access later
+            userProfile = _userProfileRepository.GetUserById(id);
+
             try
             {
-                _userProfileRepository.DeactivateUser(id);
+                //access the User Type name of the selected user and if they aren't an admin runs deactivation
+                if (userProfile.UserType.Name != "Admin")
+                {
+                    _userProfileRepository.DeactivateUser(id);
 
-                return RedirectToAction("Index");
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return RedirectToAction("Index");
+
+                }
             }
             catch (Exception ex)
             {
@@ -139,7 +152,9 @@ namespace TabloidMVC.Controllers
         {
             var userProfile = _userProfileRepository.GetByEmail(credentials.Email);
 
-            if (userProfile == null)
+            //added conditional to check for deactivation
+
+            if (userProfile == null || userProfile.Deactivated == true)
             {
                 ModelState.AddModelError("Email", "Invalid email");
                 return View();
