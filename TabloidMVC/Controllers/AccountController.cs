@@ -35,19 +35,26 @@ namespace TabloidMVC.Controllers
             List<UserProfile> users = _userProfileRepository.GetActiveUsers();
 
 
+            return View(users);
+
+            
+        }
+
+
+        [Authorize]
+        public ActionResult DeactiveList()
+        {
+
+            List<UserProfile> users = _userProfileRepository.GetDeactivatedUsers();
+
 
             return View(users);
 
 
-
-
-
-
-            
         }
-    
 
-    public ActionResult Create()
+
+        public ActionResult Create()
     {
         return View();
     }
@@ -145,6 +152,51 @@ namespace TabloidMVC.Controllers
             catch (Exception ex)
             {
                 return View(userProfile);
+            }
+        }
+
+        public ActionResult Edit(int id)
+        {
+            int currentUserId = GetCurrentUserId();
+
+            UserProfile userProfile = _userProfileRepository.GetUserById(id);
+
+            //prevent navigation to delete with param for null users and if current user isn't admin
+            if (userProfile != null || User.IsInRole("Admin"))
+            {
+                 return View(userProfile);
+
+            }
+
+             return NotFound();
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, UserProfile userProfile)
+        {
+            //goes back and gets all the user information so I can access later
+            userProfile = _userProfileRepository.GetUserById(id);
+
+            try
+            {
+                //access the User Type name of the selected user and if they aren't an admin runs deactivation
+                if (userProfile.UserType.Name != "Admin")
+                {
+                    _userProfileRepository.ReactivateUser(id);
+
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return RedirectToAction("Index");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                 return View(userProfile);
             }
         }
 
