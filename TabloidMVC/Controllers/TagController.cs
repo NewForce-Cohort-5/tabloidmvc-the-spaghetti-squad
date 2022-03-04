@@ -44,7 +44,11 @@ namespace TabloidMVC.Controllers
         // GET: TagController/Create
         public ActionResult Create()
         {
-            return View();
+            Tag tag = new Tag();
+            {
+                Tag = tag();
+            }
+            return View(tag);
         }
 
         // POST: TagController/Create
