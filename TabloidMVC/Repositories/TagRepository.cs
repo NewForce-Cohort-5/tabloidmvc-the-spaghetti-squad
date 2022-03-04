@@ -84,7 +84,7 @@ namespace TabloidMVC.Repositories
                     cmd.CommandText = @"
                     INSERT INTO Tag ([Name])
                     OUTPUT INSERTED.Id
-                    VALUES (@tag);";
+                    VALUES (@name);";
 
                     cmd.Parameters.AddWithValue("@name", tag.Name);
                 
