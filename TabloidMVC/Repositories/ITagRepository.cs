@@ -10,5 +10,7 @@ namespace TabloidMVC.Repositories
     Tag GetTagById(int id);
      void DeleteTag(int TagId);
 
+     void AddTag(Tag tag);
+
     }
 }
