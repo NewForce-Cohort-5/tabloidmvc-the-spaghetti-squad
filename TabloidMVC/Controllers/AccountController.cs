@@ -31,17 +31,33 @@ namespace TabloidMVC.Controllers
         [Authorize]
         public ActionResult Index()
         {
-          
-                List<UserProfile> users = _userProfileRepository.GetActiveUsers();
-          
-                        return View(users);
-                
-}
+            try
+            {
+                List<UserProfile> users = _userProfileRepository.GetAllUsers();
+                foreach (UserProfile user in users)
+                {
+                    var Active = !user.Deactivated;
+                   
 
-        public ActionResult Create()
-        {
-            return View();
+                        return View(Active.ToString());
+                    
+                }
+            }
+
+            catch (Exception ex)
+            {
+                return View();
+            }
+            return RedirectToAction("Index");
         }
+
+    
+
+    public ActionResult Create()
+    {
+        return View();
+    }
+
 
        
         [HttpPost]
