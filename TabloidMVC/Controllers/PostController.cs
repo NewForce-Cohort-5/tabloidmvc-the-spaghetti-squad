@@ -20,7 +20,7 @@ namespace TabloidMVC.Controllers
             _postRepository = postRepository;
             _categoryRepository = categoryRepository;
         }
-
+        //this is to view all posts
         public IActionResult Index()
         {
             var posts = _postRepository.GetAllPublishedPosts().OrderByDescending(e => e.PublishDateTime).ToList();
