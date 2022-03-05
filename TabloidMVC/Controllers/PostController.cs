@@ -97,11 +97,13 @@ namespace TabloidMVC.Controllers
         //this is to get infor of the post to be removed
         public IActionResult Delete(int id)
         {
-            Post post = _postRepository.GetPublishedPostById(id);
+            
                 
             int userId = GetCurrentUserProfileId();
+            
+            Post post = _postRepository.GetUserPostById(id, userId);
              
-                if (post == null || post.UserProfileId != userId)
+                if (post == null)
                 {
                     return NotFound();
                 }
@@ -110,6 +112,8 @@ namespace TabloidMVC.Controllers
         }
 
         //this is to remove the selected post from the database. 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Delete(int id, Post post)
         {
             try
