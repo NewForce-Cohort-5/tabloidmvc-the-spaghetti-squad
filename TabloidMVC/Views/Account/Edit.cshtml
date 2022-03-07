@@ -1,0 +1,40 @@
+﻿@model TabloidMVC.Models.UserProfile
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Reactivate</h1>
+
+<h4>User Profile</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+           
+            <div class="form-group">
+                <label asp-for="FullName" class="control-label"><b>Full Name:</b>  </label>  
+                <span asp-validation-for="FullName" >@Model.FullName</span>
+
+            </div>
+          
+            <div class="form-group">
+                <label asp-for="DisplayName" class="control-label"><b>Display Name:</b> </label>
+                <span asp-validation-for="DisplayName" >@Model.DisplayName</span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"><b>Email:</b> </label>
+                <span asp-validation-for="Email" >@Model.Email</span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Reactivate" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="DeactiveList">Back to List</a>
+</div>
+

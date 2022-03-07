@@ -49,18 +49,22 @@ namespace TabloidMVC.Controllers
         {
             //this is to check to see if there are posts that have been approved
             var post = _postRepository.GetPublishedPostById(id);
-            if (post == null)
-            {
-                //this is to check to see if there are posts that has not been approved
+            
+             
+                    if (post == null)
+                    {
+                        //this is to check to see if there are posts that has not been approved
 
-                int userId = GetCurrentUserProfileId();
-                post = _postRepository.GetUserPostById(id, userId);
-                if (post == null)
-                {
-                    return NotFound();
-                }
-            }
-            return View(post);
+                        int userId = GetCurrentUserProfileId();
+                        post = _postRepository.GetUserPostById(id, userId);
+                        if (post == null)
+                        {
+                            return NotFound();
+                        }
+                    }
+                    return View(post);
+              
+           
         }
         //This is getting new post form information 
         public IActionResult Create()

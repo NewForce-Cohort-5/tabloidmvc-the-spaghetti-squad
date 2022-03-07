@@ -33,8 +33,8 @@ namespace TabloidMVC.Repositories
                               LEFT JOIN Category c ON p.CategoryId = c.id
                               LEFT JOIN UserProfile u ON p.UserProfileId = u.id
                               LEFT JOIN UserType ut ON u.UserTypeId = ut.id
-                        WHERE IsApproved = 1 AND PublishDateTime < SYSDATETIME()";
-                    //PublishDateTime < SYSDATETIME() is for getting post that has PublisDateTime in the past
+                        WHERE IsApproved = 1 AND PublishDateTime < SYSDATETIME() OR PublishDateTime is NULL";
+                    //PublishDateTime < SYSDATETIME() is for getting post that has PublisDateTime in the past and added another logic PublishDateTime is NULL to show post with 
 
                     var reader = cmd.ExecuteReader();
 
@@ -73,7 +73,7 @@ namespace TabloidMVC.Repositories
                               LEFT JOIN Category c ON p.CategoryId = c.id
                               LEFT JOIN UserProfile u ON p.UserProfileId = u.id
                               LEFT JOIN UserType ut ON u.UserTypeId = ut.id
-                        WHERE IsApproved = 1 AND PublishDateTime < SYSDATETIME()
+                        WHERE IsApproved = 1
                               AND p.id = @id";
 
                     cmd.Parameters.AddWithValue("@id", id);
