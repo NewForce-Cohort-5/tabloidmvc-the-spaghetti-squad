@@ -8,6 +8,7 @@ using System.Security.Claims;
 using TabloidMVC.Models;
 using TabloidMVC.Models.ViewModels;
 using TabloidMVC.Repositories;
+using System;
 
 namespace TabloidMVC.Controllers
 {
@@ -65,7 +66,7 @@ namespace TabloidMVC.Controllers
               
            
         }
-
+        //This is getting new post form information 
         public IActionResult Create()
         {
             var vm = new PostCreateViewModel();
@@ -73,13 +74,17 @@ namespace TabloidMVC.Controllers
             return View(vm);
         }
 
+        //this is to add the new post from the C# vm to SQL database
         [HttpPost]
         public IActionResult Create(PostCreateViewModel vm)
         {
             try
             {
+                //this is setting CreateDateTime to the current date and time
                 vm.Post.CreateDateTime = DateAndTime.Now;
+                //this is seting the IsApproved to true and stored in the database as BIT value of 1
                 vm.Post.IsApproved = true;
+                // this is setting UserProfileId to the currentUserId
                 vm.Post.UserProfileId = GetCurrentUserProfileId();
 
                 _postRepository.Add(vm.Post);
@@ -93,6 +98,40 @@ namespace TabloidMVC.Controllers
             }
         }
 
+        //this is to get infor of the post to be removed
+        public IActionResult Delete(int id)
+        {
+            
+                
+            int userId = GetCurrentUserProfileId();
+            
+            Post post = _postRepository.GetUserPostById(id, userId);
+             
+                if (post == null)
+                {
+                    return NotFound();
+                }
+            
+            return View(post);
+        }
+
+        //this is to remove the selected post from the database. 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(int id, Post post)
+        {
+            try
+            {
+                _postRepository.Delete(id);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                return View(post);
+            }
+        
+ 
+        }
         private int GetCurrentUserProfileId()
         {
             string id = User.FindFirstValue(ClaimTypes.NameIdentifier);

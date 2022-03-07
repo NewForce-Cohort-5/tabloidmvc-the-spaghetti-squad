@@ -177,7 +177,6 @@ ORDER By p.CreateDateTime Desc";
             }
         }
 
-
         public void Add(Post post)
         {
             using (var conn = Connection)
@@ -205,6 +204,24 @@ ORDER By p.CreateDateTime Desc";
                     post.Id = (int)cmd.ExecuteScalar();
                 }
             }
+        }
+
+        public void Delete(int postId)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                    Delete FROM POST
+                    WHERE Id = @id";
+
+                    cmd.Parameters.AddWithValue("@id", postId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
         }
 
         private Post NewPostFromReader(SqlDataReader reader)
