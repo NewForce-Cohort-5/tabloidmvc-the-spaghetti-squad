@@ -85,7 +85,7 @@ namespace TabloidMVC.Repositories
                     INSERT INTO Tag ([Name])
                     OUTPUT INSERTED.Id
                     VALUES (@name);";
-
+                    //output insterted.Id return the id so we can use with executeScalar to insert ID
                     cmd.Parameters.AddWithValue("@name", tag.Name);
                 
 
@@ -96,6 +96,30 @@ namespace TabloidMVC.Repositories
             }
         }
 
+
+        public void UpdateTag( Tag tag, int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                            UPDATE Tag
+                            SET 
+                               [Name] = @name 
+                               WHERE Id = @id";
+                    
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.Parameters.AddWithValue("@name", tag.Name);
+                   
+
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
         public void DeleteTag(int TagId)
         {
             using (SqlConnection conn = Connection)
