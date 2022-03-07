@@ -18,13 +18,17 @@ namespace TabloidMVC.Controllers
     public class AccountController : Controller
     {
         private readonly IUserProfileRepository _userProfileRepository;
+        private readonly IUserTypeRepository _userTypeRepository;
+
 
 
         public AccountController(
-            IUserProfileRepository userProfileRepository
+            IUserProfileRepository userProfileRepository,
+            IUserTypeRepository userTypeRepository
             )
         {
             _userProfileRepository = userProfileRepository;
+            _userTypeRepository = userTypeRepository;
 
 
         }
@@ -210,6 +214,43 @@ namespace TabloidMVC.Controllers
             catch (Exception ex)
             {
                  return View(userProfile);
+            }
+        }
+
+
+        public ActionResult UserTypeEdit(int id)
+        {
+
+
+
+            UpdateUserTypeViewModel vm = new UpdateUserTypeViewModel();
+
+             vm.UserProfile = _userProfileRepository.GetUserById(id);
+             vm.UserTypes = _userTypeRepository.GetAll();
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UserTypeEdit(UpdateUserTypeViewModel vm)
+        {
+            try
+            {
+              /*  var userTypeId = Request.Form["UserProfile.UserTypeId"];
+                vm.UserProfile.UserTypeId = Int32.Parse(userTypeId);
+
+                UserProfile user = new UserProfile();
+                {
+                    user.UserTypeId = vm.UserProfile.UserTypeId;
+                }*/
+
+                _userProfileRepository.UpdateUserType(vm.UserProfile);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                return View(vm);
             }
         }
 
