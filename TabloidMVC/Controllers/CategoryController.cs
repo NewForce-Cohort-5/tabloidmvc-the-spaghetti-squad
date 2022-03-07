@@ -60,7 +60,7 @@ namespace TabloidMVC.Controllers
         // POST: CategoryController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, Category category)
+        public ActionResult Edit(Category category)
         {
             try
             {
