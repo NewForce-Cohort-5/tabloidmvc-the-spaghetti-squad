@@ -1,44 +1,24 @@
 ﻿@model TabloidMVC.Models.ViewModels.UpdateUserTypeViewModel
 
 @{
-    ViewData["Title"] = "UserTypeEdit";
+    ViewData["Title"] = "Change User Type";
 }
 
 <h1>Edit</h1>
 
-<h4>Owner</h4>
+<h4>User Profile</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="UserTypeEdit">
-        @*    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <input asp-for="Owner.Id" class="form-control" type="hidden" />
+                <input asp-for="UserProfile.Id" class="form-control" type="hidden" />
             </div>
             <div class="form-group">
-                <label asp-for="Owner.Email" class="control-label"></label>
-                <input asp-for="Owner.Email" class="form-control" />
-                <span asp-validation-for="Owner.Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Owner.Name" class="control-label"></label>
-                <input asp-for="Owner.Name" class="form-control" />
-                <span asp-validation-for="Owner.Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Owner.Address" class="control-label"></label>
-                <input asp-for="Owner.Address" class="form-control" />
-                <span asp-validation-for="Owner.Address" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Owner.Phone" class="control-label"></label>
-                <input asp-for="Owner.Phone" class="form-control" />
-                <span asp-validation-for="Owner.Phone" class="text-danger"></span>
-            </div>*@
-            <div class="form-group">
-                <label asp-for="UserProfile.UserTypeId" class="control-label"></label>
+                <label asp-for="UserProfile.UserTypeId" class="control-label">User Type</label>
                 <select asp-for="UserProfile.UserTypeId" class="form-control">
-                    <option value="">Select Neighborhood</option>
+                    <option value="">Select User Type</option>
                     @foreach (UserType type in Model.UserTypes)
                     {
                         <option value="@type.Id">@type.Name</option>
@@ -54,7 +34,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Cancel</a>
 </div>
 
 @section Scripts {

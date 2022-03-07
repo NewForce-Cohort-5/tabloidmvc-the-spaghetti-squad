@@ -154,7 +154,7 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
-        public void UpdateUserType( UserProfile userProfile)
+        public void UpdateUserType(UserProfile userProfile)
         {
             using (SqlConnection conn = Connection)
             {

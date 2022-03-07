@@ -220,13 +220,13 @@ namespace TabloidMVC.Controllers
 
         public ActionResult UserTypeEdit(int id)
         {
-            List<UserType> userTypes = _userTypeRepository.GetAll();
 
-            UpdateUserTypeViewModel vm = new UpdateUserTypeViewModel()
-            {
-                UserProfile = _userProfileRepository.GetUserById(id),
-                UserTypes = userTypes
-            };
+
+
+            UpdateUserTypeViewModel vm = new UpdateUserTypeViewModel();
+
+             vm.UserProfile = _userProfileRepository.GetUserById(id);
+             vm.UserTypes = _userTypeRepository.GetAll();
 
             return View(vm);
         }
@@ -237,7 +237,14 @@ namespace TabloidMVC.Controllers
         {
             try
             {
-         
+              /*  var userTypeId = Request.Form["UserProfile.UserTypeId"];
+                vm.UserProfile.UserTypeId = Int32.Parse(userTypeId);
+
+                UserProfile user = new UserProfile();
+                {
+                    user.UserTypeId = vm.UserProfile.UserTypeId;
+                }*/
+
                 _userProfileRepository.UpdateUserType(vm.UserProfile);
                 return RedirectToAction(nameof(Index));
             }

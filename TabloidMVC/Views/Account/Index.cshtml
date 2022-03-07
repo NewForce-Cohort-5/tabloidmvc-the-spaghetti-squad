@@ -43,12 +43,10 @@
           
             <td>
                 @Html.ActionLink("Details", "Details", new {  id=item.Id }) |
-                <a asp-area="" asp-controller="Account" asp-action="UserTypeEdit">Edit</a> |
+                <a asp-route-id = "@item.Id" asp-area="" asp-controller="Account" asp-action="UserTypeEdit">Edit</a> |
 
                 @Html.ActionLink("Deactivate", "Delete", new { id=item.Id  })
-                
-@*                @Html.ActionLink("Delete", "Delete", new {  id=item.Id  })
-*@            </td>
+                          </td>
         </tr>
 }
     </tbody>
