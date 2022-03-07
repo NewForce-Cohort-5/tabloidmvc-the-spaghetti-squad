@@ -39,7 +39,7 @@ namespace TabloidMVC.Controllers
                 List<UserProfile> users = _userProfileRepository.GetAllUsers();
 
                 foreach (UserProfile user in users)
-                if(user.Deactivated == false)
+                if(!user.Deactivated)
                 activeUsers.Add(user);
             }
 
@@ -57,7 +57,7 @@ namespace TabloidMVC.Controllers
                 List<UserProfile> users = _userProfileRepository.GetAllUsers();
 
                 foreach (UserProfile user in users)
-                    if (user.Deactivated == true)
+                    if (user.Deactivated)
                         deactivatedUsers.Add(user);
             }
 
