@@ -72,69 +72,7 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
-        public List<UserProfile> GetActiveUsers()
-        {
-            using (var conn = Connection)
-            {
-                conn.Open();
-                using (var cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = @"
-                       SELECT u.id, u.FirstName, u.LastName, u.DisplayName, u.Email,
-                              u.CreateDateTime, u.ImageLocation, u.UserTypeId,
-                              ut.[Name] AS UserTypeName, u.Deactivated
-                         FROM UserProfile u
-                              LEFT JOIN UserType ut ON u.UserTypeId = ut.id
-                                WHERE u.Deactivated = 0
-                               ORDER BY u.DisplayName ASC;";
-
-                    var reader = cmd.ExecuteReader();
-
-                    var users = new List<UserProfile>();
-
-                    while (reader.Read())
-                    {
-                        users.Add(NewUserFromReader(reader));
-                    }
-
-                    reader.Close();
-
-                    return users;
-                }
-            }
-        }
-
-        public List<UserProfile> GetDeactivatedUsers()
-        {
-            using (var conn = Connection)
-            {
-                conn.Open();
-                using (var cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = @"
-                       SELECT u.id, u.FirstName, u.LastName, u.DisplayName, u.Email,
-                              u.CreateDateTime, u.ImageLocation, u.UserTypeId,
-                              ut.[Name] AS UserTypeName, u.Deactivated
-                         FROM UserProfile u
-                              LEFT JOIN UserType ut ON u.UserTypeId = ut.id
-                                WHERE u.Deactivated = 1
-                               ORDER BY u.DisplayName ASC;";
-
-                    var reader = cmd.ExecuteReader();
-
-                    var users = new List<UserProfile>();
-
-                    while (reader.Read())
-                    {
-                        users.Add(NewUserFromReader(reader));
-                    }
-
-                    reader.Close();
-
-                    return users;
-                }
-            }
-        }
+       
         public UserProfile GetUserById(int id)
         {
             using (SqlConnection conn = Connection)

@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using TabloidMVC.Models;
 using TabloidMVC.Models.ViewModels;
+using System.Linq;
 
 using TabloidMVC.Repositories;
 
@@ -32,10 +33,17 @@ namespace TabloidMVC.Controllers
         public ActionResult Index()
         {
 
-            List<UserProfile> users = _userProfileRepository.GetActiveUsers();
 
+            List<UserProfile> activeUsers = new List<UserProfile>();
+            {
+                List<UserProfile> users = _userProfileRepository.GetAllUsers();
 
-            return View(users);
+                foreach (UserProfile user in users)
+                if(user.Deactivated == false)
+                activeUsers.Add(user);
+            }
+
+            return View(activeUsers);
 
             
         }
@@ -44,11 +52,16 @@ namespace TabloidMVC.Controllers
         [Authorize]
         public ActionResult DeactiveList()
         {
+            List<UserProfile> deactivatedUsers = new List<UserProfile>();
+            {
+                List<UserProfile> users = _userProfileRepository.GetAllUsers();
 
-            List<UserProfile> users = _userProfileRepository.GetDeactivatedUsers();
+                foreach (UserProfile user in users)
+                    if (user.Deactivated == true)
+                        deactivatedUsers.Add(user);
+            }
 
-
-            return View(users);
+            return View(deactivatedUsers);
 
 
         }
