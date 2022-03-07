@@ -149,11 +149,32 @@ namespace TabloidMVC.Repositories
                     cmd.Parameters.AddWithValue("@id", id);
                     cmd.Parameters.AddWithValue("@Deactivated", true);
 
+
                     cmd.ExecuteNonQuery();
                 }
             }
         }
+        public void UpdateUserType( UserProfile userProfile)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
 
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                            UPDATE UserProfile
+                            SET UserTypeId = @UserTypeId                           
+                            WHERE Id = @id";
+
+                    cmd.Parameters.AddWithValue("@id", userProfile.Id);
+                    cmd.Parameters.AddWithValue("@UserTypeId", userProfile.UserTypeId);
+
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
         public void ReactivateUser(int id)
         {
             using (SqlConnection conn = Connection)
