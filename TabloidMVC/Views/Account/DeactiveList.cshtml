@@ -1,0 +1,49 @@
+﻿@model IEnumerable<TabloidMVC.Models.UserProfile>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Deactivated Users</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Full Name
+            </th>
+            <th>
+                Display Name
+            </th>
+           
+            <th>
+                User Type
+            </th>
+            <th>
+                
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DisplayName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserType.Name)
+            </td>          
+            <td>
+                @Html.ActionLink("Reactivate", "Edit", new { id=item.Id  }) 
+              @*  @Html.ActionLink("Details", "Details", new {  id=item.Id }) |
+                @Html.ActionLink("Delete", "Delete", new {  id=item.Id  })*@
+            </td>
+        </tr>
+}
+<a asp-action="Index">Back to List</a>
+    </tbody>
+</table>

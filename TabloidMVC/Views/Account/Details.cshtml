@@ -1,0 +1,46 @@
+﻿@model TabloidMVC.Models.UserProfile
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>UserProfile</h4>
+    <hr />
+    <dl class="row">
+            <dd class="card m-4" style="width: 8rem;" >
+          @if (String.IsNullOrEmpty(Model.ImageLocation)) {
+          <img
+            style="width:100px;float:left;margin-right:20px"
+            src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Font_Awesome_5_regular_user-circle.svg"
+            alt="User"
+          />
+          } else {
+          <img src="@Model.ImageLocation" class="card-img-top" alt="User" />
+          }</dd>
+          <div> 
+             
+        <dd class = "col-sm-20">
+           <h2> @Html.DisplayFor(model => model.FullName) </h2>
+        </dd>
+        <dd class = "col-sm-20">
+           <b>Display Name:</b> @Html.DisplayFor(model => model.DisplayName)
+        </dd>
+        <dd class = "col-sm-20">
+           <b>Email:</b> @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dd class = "col-sm-20">
+           <b>Date Created:</b> @Model.CreateDateTime.Value.ToShortDateString()
+        </dd>
+        <dd class = "col-sm-20">
+           <b>User Type:</b> @Html.DisplayFor(model => model.UserType.Name)
+        </dd>
+        </div>
+    </dl>
+</div>
+<div>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    <a asp-action="Index">Back to List</a>
+</div>
